@@ -11,3 +11,10 @@ Read about [tetravex on wikipedia](https://en.wikipedia.org/wiki/Edge-matching_p
 ## Preview
 
 ![Preview of the game](misc/preview.png)
+
+## Development
+
+### Class diagram
+
+![Diagram of classes](misc/clsdia.png)
+

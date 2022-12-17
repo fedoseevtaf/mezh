@@ -16,9 +16,5 @@ Read about [tetravex on wikipedia](https://en.wikipedia.org/wiki/Edge-matching_p
 
 ### Class diagram
 
-<img alt='Diagram of classes'
-	src='misc/clsdia.png'
-	width=25%
-	height=25%
->
+<img alt='Diagram of classes' src='misc/clsdia.png' width=25% height=25%>
 

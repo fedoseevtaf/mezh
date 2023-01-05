@@ -68,10 +68,3 @@ class Field():
 			return False
 		return all(self._row_matching()) and all(self._col_matching())
 
-	def points(self):
-		return (
-			(row, col)
-			for row in range(self.height)
-			for col in range(self.width)
-		)
-

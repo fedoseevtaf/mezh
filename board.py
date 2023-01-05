@@ -49,7 +49,7 @@ class Board():
 		self._buff_field.resize(width, height)
 
 	def restart(self):
-		v_map, h_map = _create_color_maps()
+		v_map, h_map = self._create_color_maps()
 		points = set(self._points_of(self._main_field))
 		while points:
 			point = points.pop()
@@ -91,7 +91,7 @@ class Board():
 			self,
 			field_1: Field, row_1: int, col_1: int,
 			field_2: Field, row_2: int, col_2: int
-		)
+		):
 		actual_1 = field1.get_at(row_1, col_1)
 		actual_2 = field2.get_at(row_2, col_2)
 		field_1.set_at(row_1, col_2, actual_2)

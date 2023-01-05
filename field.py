@@ -24,6 +24,8 @@ class Field():
 		self._field = {}
 
 	def resize(self, width: int, height: int):
+		self.width = width
+		self.height = height
 		self._field.clear()
 		for row in range(height):
 			for col in range(width):

@@ -3,7 +3,7 @@ import pygame
 from board import Board
 from field import NoCell
 
-from ui.base import UIElement
+from r_ui.base import UIElement
 
 
 class UIBoard(UIElement, Board):

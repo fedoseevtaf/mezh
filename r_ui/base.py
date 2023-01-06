@@ -23,6 +23,47 @@ class UIElement():
 		pygame.draw.rect(surf, self.back_color, self.rect)
 
 
+class BorderedContainer(UIElement):
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.content: UIElement = None
+		self._border_radius = 0
+
+	def presize(self, rect):
+		self.rect = rect
+		self._presize_content()
+
+	def render_onto(self, surf):
+		self._draw_back(surf)
+		if self.content is None:
+			return
+		self.content.render_onto(surf)
+
+	def _draw_back(self, surf):
+		pygame.draw.rect(
+			surf, self.rect, self.back_color,
+			border_radius=self.border_radius,
+		)
+
+	def _presize_content(self):
+		x = self.rect.x + self.border_radius
+		y = self.rect.y + self.border_radius
+		width = self.rect.width - 2 * self.border_radius
+		height = self.rect.height - 2 * self.border_radius
+		self.content.presize(pygame.Rect(x, y, width, height))
+
+	@property
+	def border_radius(self):
+		return self._border_radius
+
+	@border_radius.setter
+	def border_radius(self, radius: int):
+		self._border_radius = radius
+		self._presize_content()
+		return radius
+
+
 class Button(UIElement):
 	ON_PRESS = 1
 	ON_RELEASE = 2
@@ -45,30 +86,4 @@ class Button(UIElement):
 	def click_at(self, pos):
 		if self.rect.colidepoint(pos):
 			self.callback(pos)
-
-
-class Text(UIElement):
-
-	def __init__(self, *args, **kwargs):
-		super().__init__(self)
-		self._text = ''
-		self._text_color = 'black'
-		self._font_name = 'monospace'
-		self._font_size = 0
-
-		self._prerender_sufr = None
-		self._prerender_rect = None
-
-	def presize(self, rect):
-		self.rect = rect
-		self.font_size = self.rect.height
-
-	def render_onto(self, surf):
-		self._draw_back(surf)
-		surf.blit.
-
-
-
-
-
 

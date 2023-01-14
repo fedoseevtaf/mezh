@@ -5,17 +5,17 @@ from r_ui.base import UIElement
 
 class Shape(UIElement):
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, color='Sienna', **kwargs):
 		super().__init__(*args, **kwargs)
-		self._color = 'black'
+		self.__color = color
 
 	@property
 	def color(self):
-		return self._color
+		return self.__color
 
 	@color.setter
 	def color(self, color):
-		self._color = color
+		self.__color = color
 		return color
 
 
@@ -36,18 +36,9 @@ class DownTriangle(Shape):
 	def render_onto(self, surf):
 		pygame.draw.polygon(
 			surf, self.color, (
-				self.midbottom,
-				self.topleft,
-				self.topright,
+				self.rect.midbottom,
+				self.rect.topleft,
+				self.rect.topright,
 			)
 		)
-
-
-
-
-
-
-
-
-
 

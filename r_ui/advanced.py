@@ -1,5 +1,5 @@
 from r_ui.base import UIElement, BorderedContainer, Button
-from r_ui.text import Text
+from r_ui.text import TextString
 from r_ui.shapes import UpTriangle, DownTriangle
 
 
@@ -28,11 +28,11 @@ class BorderedContent(BorderedContainer):
 		return self.content
 
 
-class TextField(BorderedContent, content_type=Text):
+class TextField(BorderedContent, content_type=TextString):
 	pass
 
 
-class TextButton(Button, BorderedContent, content_type=Text):
+class TextButton(Button, BorderedContent, content_type=TextString):
 	pass
 
 

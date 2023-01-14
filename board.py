@@ -41,20 +41,17 @@ class Board():
 	def win(self) -> bool:
 		return self._main_field.ismatched()
 
-	def reskill(self, skill_level):
-		pass
-
 	def resize(self, width: int, height: int):
 		self._main_field.resize(width, height)
 		self._buff_field.resize(width, height)
 
 	def restart(self):
 		v_map, h_map = self._create_color_maps()
-		points = set(self._points_of(self._main_field))
-		while points:
-			point = points.pop()
+		points = tuple(self._points_of(self._main_field))
+		k = self._main_field.width * self._main_field.height
+		for rand_point, point in zip(random.sample(points, k), points):
 			cell = self._painted_cell(v_map, h_map, point)
-			self._buff_field.set_at(*point, cell)
+			self._buff_field.set_at(*rand_point, cell)
 
 	def _points_of(self, field: Field):
 		for row in range(field.height):
@@ -92,8 +89,8 @@ class Board():
 			field_1: Field, row_1: int, col_1: int,
 			field_2: Field, row_2: int, col_2: int
 		):
-		actual_1 = field1.get_at(row_1, col_1)
-		actual_2 = field2.get_at(row_2, col_2)
-		field_1.set_at(row_1, col_2, actual_2)
+		actual_1 = field_1.get_at(row_1, col_1)
+		actual_2 = field_2.get_at(row_2, col_2)
+		field_1.set_at(row_1, col_1, actual_2)
 		field_2.set_at(row_2, col_2, actual_1)
 

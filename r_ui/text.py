@@ -3,7 +3,7 @@ import pygame
 from r_ui.base import UIElement
 
 
-class Text(UIElement):
+class TextString(UIElement):
 
 	def __init__(self, /, 
 			text: str = '', font: str = 'monospace',
@@ -30,7 +30,6 @@ class Text(UIElement):
 		self.__text_rect.center = self.rect.center
 
 	def render_onto(self, surf):
-		self._draw_back(surf)
 		if self.__surf is not None:
 			surf.blit(self.__surf, self.__text_rect)
 

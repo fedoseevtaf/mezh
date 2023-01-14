@@ -72,7 +72,7 @@ class BorderedContainer(UIElement):
 		)
 
 	def _presize_content(self):
-		if self.content is None:
+		if self.content is None or self.rect is None:
 			return
 		x = self.rect.x + self.border_radius
 		y = self.rect.y + self.border_radius

@@ -10,22 +10,22 @@ class ContainerButton(Button, BorderedContainer):
 class BorderedContent(BorderedContainer):
 
 	def __init_subclass__(cls, content_type=None, **kwargs):
-		super().__init_subclass__()
+		super().__init_subclass__(**kwargs)
 		cls.__content = content_type
 
-	def __init__(self, *args, **kwargs):
-		super().__init__(*args, **kwargs)
+	def __init__(self, /, **kwargs):
+		super().__init__(**kwargs)
 		if self.__content is None:
 			return
 		self.__content = self.__content()
 
 	@property
 	def content(self):
-		return self._content
+		return self.__content
 
 	@content.setter
 	def content(self, content):
-		return
+		return self.content
 
 
 class TextField(BorderedContent, content_type=Text):

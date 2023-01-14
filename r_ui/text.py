@@ -27,7 +27,6 @@ class TextString(UIElement):
 	def presize(self, rect):
 		super().presize(rect)
 		self.font_size = self.rect.height
-		self.__text_rect.center = self.rect.center
 
 	def render_onto(self, surf):
 		if self.__surf is not None:

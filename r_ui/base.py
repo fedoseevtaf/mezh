@@ -67,6 +67,7 @@ class BorderedContainer(UIElement):
 		self._presize_content()
 		
 	def event(self, event: pygame.event.EventType):
+		super().event(event)
 		if self.content is None:
 			return
 		self.content.event(event)
@@ -118,7 +119,7 @@ class Button(UIElement):
 
 	def __init__(self, /, **kwargs):
 		super().__init__(**kwargs)
-		self.__callback = self.__init__
+		self.__callback = print
 		self.__mode = self.ON_PRESS
 
 	def event(self, event: pygame.event.EventType):

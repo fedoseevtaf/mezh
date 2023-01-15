@@ -105,7 +105,7 @@ class UIBoard(Button, Board):
 		focus_rect.width *= 0.8
 		focus_rect.height *= 0.8
 		focus_rect.center = rect.center
-		pygame.draw.ellipse(surf, self._get_focus_color(), focus_rect, width=2)
+		pygame.draw.ellipse(surf, self._get_focus_color(), focus_rect, width=3)
 	
 	def _draw_cell_pad(self, surf, rect):
 		pad_rect = rect.copy()

@@ -28,6 +28,8 @@ class Image(UIElement):
 			return
 		if self.__origin is None:
 			self._load()
+		if self.rect is None:
+			return
 		self.__surf = pygame.transform.scale(self.__origin, self.rect.size)
 		self.__image_rect = self.__surf.get_rect()
 		self.__image_rect.center = self.rect.center

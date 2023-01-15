@@ -65,6 +65,11 @@ class BorderedContainer(UIElement):
 	def presize(self, rect: pygame.Rect):
 		super().presize(rect)
 		self._presize_content()
+		
+	def event(self, event: pygame.event.EventType):
+		if self.content is None:
+			return
+		self.content.event(event)
 
 	def render_onto(self, surf: pygame.Surface):
 		self._draw_back(surf)

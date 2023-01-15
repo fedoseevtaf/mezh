@@ -71,11 +71,9 @@ class Board():
 		yield color_map(width, height + 1)
 		yield color_map(width + 1, height)
 
-	def move(
-			self,
+	def move(self,
 			field_1, row_1: int, col_1: int,
-			field_2, row_2: int, col_2: int,
-		):
+			field_2, row_2: int, col_2: int):
 		if field_1 not in self._fields:
 			return
 		if field_2 not in self._fields:
@@ -84,11 +82,9 @@ class Board():
 		field_2 = self._fields[field_2]
 		self._move(field_1, row_1, col_1, field_2, row_2, col_2)
 
-	def _move(
-			self,
+	def _move(self,
 			field_1: Field, row_1: int, col_1: int,
-			field_2: Field, row_2: int, col_2: int
-		):
+			field_2: Field, row_2: int, col_2: int):
 		actual_1 = field_1.get_at(row_1, col_1)
 		actual_2 = field_2.get_at(row_2, col_2)
 		field_1.set_at(row_1, col_1, actual_2)

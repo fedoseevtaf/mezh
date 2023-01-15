@@ -1,4 +1,4 @@
-from r_ui.base import UIElement, BorderedContainer, Button
+from r_ui.base import BorderedContainer, Button
 from r_ui.text import TextString
 from r_ui.image import Image
 from r_ui.shapes import UpTriangle, DownTriangle
@@ -43,7 +43,8 @@ class UpArrowButton(Button, BorderedContent, content_type=UpTriangle):
 
 class DownArrowButton(Button, BorderedContent, content_type=DownTriangle):
 	pass
-	
+
+
 class ImageButton(Button, BorderedContent, content_type=Image):
 	pass
 

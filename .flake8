@@ -1,0 +1,36 @@
+[flake8]
+max-line-length = 80
+filename = *.py
+select = 
+	W292,
+	# No new line at end of file
+	E901,
+	# SyntaxError or IndentationError
+	E7,
+	# Statement
+	E5,
+	# Line length
+	E3,
+	# Blank line
+	E2,
+	# Whitespace
+	E101,
+	# indentation contains mixed spaces and tabs
+	E11,
+	# Indentation
+	# but without E12 because they are hard to use
+	# with a lots of arguments in function
+	F,
+	# Flake codes
+ignore = 
+	E261
+	# at least two spaces before inline comment
+exclude = 
+	# Python venv
+	bin/*,
+	include/*,
+	lib/*,
+	lib64/*
+	pyvenv.cfg/*,
+	*__pycache__*
+	

@@ -9,7 +9,7 @@ COLORS = (
 	'DarkOrange', 'Gold',
 	'BlueViolet', 'YellowGreen',
 	'MediumSlateBlue', 'Chocolate',
-	'Ivory', 'SlateGray',
+	'Linen', 'Turquoise',
 )
 
 

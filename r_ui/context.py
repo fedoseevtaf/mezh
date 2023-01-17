@@ -63,7 +63,7 @@ class ContextSwitcher(Context):
 			return
 		context.event(event)
 
-	def swicth(self, title: str):
+	def switch(self, title: str):
 		self.__actual_context = title
 
 	def get_context(self, title: str):

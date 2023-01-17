@@ -5,8 +5,8 @@ from r_ui.base import UIElement
 
 class Image(UIElement):
 
-	def __init__(self, /, src: str = None, **kwargs):
-		super().__init__(**kwargs)
+	def __init__(self, *args, src: str = None, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.__src = src
 		self.__image_rect = None
 		self.__origin = None

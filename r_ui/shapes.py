@@ -5,8 +5,8 @@ from r_ui.base import UIElement
 
 class Shape(UIElement):
 
-	def __init__(self, /, color='Sienna', **kwargs):
-		super().__init__(**kwargs)
+	def __init__(self, *args, color='Sienna', **kwargs):
+		super().__init__(*args, **kwargs)
 		self.__color = color
 
 	@property

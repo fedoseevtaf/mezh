@@ -15,8 +15,8 @@ class UIElement():
 	def __init_subclass__(cls, **kwargs):
 		super().__init_subclass__(**kwargs)
 
-	def __init__(self, /, back_color='Ivory', **kwargs):
-		super().__init__(**kwargs)
+	def __init__(self, *args, back_color='Ivory', **kwargs):
+		super().__init__(*args, **kwargs)
 		self.__rect: pygame.Rect = None
 		self.__back_color = back_color
 		self.__back = True
@@ -57,8 +57,8 @@ class UIElement():
 
 class BorderedContainer(UIElement):
 
-	def __init__(self, /, border_radius: int = 0, **kwargs):
-		super().__init__(**kwargs)
+	def __init__(self, *args, border_radius: int = 0, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.__content: UIElement = None
 		self.__border_radius = border_radius
 
@@ -117,8 +117,8 @@ class Button(UIElement):
 	ON_PRESS = 1
 	ON_RELEASE = 2
 
-	def __init__(self, /, **kwargs):
-		super().__init__(**kwargs)
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
 		self.__callback = print
 		self.__mode = self.ON_PRESS
 

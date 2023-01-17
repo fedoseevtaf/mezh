@@ -14,7 +14,7 @@ class BorderedContent(BorderedContainer):
 		super().__init_subclass__(**kwargs)
 		cls.__content = content_type
 
-	def __init__(self, /, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super().__init__(**kwargs)
 		if self.__content is None:
 			return

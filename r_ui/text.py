@@ -5,10 +5,10 @@ from r_ui.base import UIElement
 
 class TextString(UIElement):
 
-	def __init__(self, /, 
+	def __init__(self, *args, 
 			text: str = '', font: str = 'monospace',
 			text_color='black', **kwargs):
-		super().__init__(**kwargs)
+		super().__init__(*args, **kwargs)
 		self.__text = text
 		self.__text_color = text_color
 		self.__font_name = font

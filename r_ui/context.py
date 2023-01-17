@@ -7,7 +7,7 @@ from r_ui.base import UIElement
 
 class Context(UIElement):
 
-	def __init__(*args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.__elements: Set[UIElement] = set()
 		self.__ishidden: Dict[UIElement, bool] = {}
@@ -44,7 +44,7 @@ class Context(UIElement):
 
 class ContextSwitcher(Context):
 
-	def __init__(*args, **kwargs):
+	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.__subcontextes: Dict[str, Context] = {}
 		self.__actual_context: str = None
@@ -67,11 +67,11 @@ class ContextSwitcher(Context):
 		self.__actual_context = title
 
 	def get_context(self, title: str):
-		return self.__subcontextes.get(context)
+		return self.__subcontextes.get(title)
 
 	def set_context(self, title: str, context: Context):
 		self.__subcontextes[title] = context
 
 	def del_context(self, title: str):
-		self.__subcontextes.pop(context)
+		self.__subcontextes.pop(title)
 

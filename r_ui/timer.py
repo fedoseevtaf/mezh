@@ -14,10 +14,10 @@ class Timer(TextString):
 		self.__is_on = False
 
 	def render_onto(self, surf: pygame.Surface):
-		delta = self.get()
+		delta = int(self.get())
 		second = delta % 60 // 1
 		minute = delta // 60 % 60
-		self.text = f'{minute:0> 2}:{second:0> 2}'
+		self.text = f'{minute:02}:{second:02}'
 		super().render_onto(surf)
 
 	def start(self):

@@ -41,16 +41,23 @@ class App():
 	def __init__(self):
 		# Behavior
 		self.size = 3
-		self._size_range = range(2, 6)
+		self._size_range = range(2, 8)
 		self._WIN_TEXT = 'WIN!'
 		# UI details
 		self._screen: pygame.Surface = None
-		self._back_color = 'Gray'
+		self._backgraoud: pygame.Surface = None
+
 		self._front_color = 'Ivory'
 		self._text_color = 'Black'
 
 		self._menus: ContextSwitcher = None
 		self._game_page: Context = None
+		self._main_menu: Context = None
+		
+		self._to_main_menu_btn: ImageBtn = None
+		# Main menu
+		self._game_title: TextString = None
+		self._play_btn: TextButton = None
 		# Game page
 		self._central_text: TextString = None
 
@@ -69,10 +76,26 @@ class App():
 
 	def init(self):
 		self._screen = pygame.display.get_surface()
+		self._background = pygame.image.load('img/back.png').convert()
+
 		self._menus = ContextSwitcher()
 		self._game_page = Context()
 		self._menus.set_context('game', self._game_page)
-		self._menus.switch('game')
+		self._main_menu = Context()
+		self._menus.set_context('menu', self._main_menu)
+		self._menus.switch('menu')
+		# Main menu
+		self._game_title = TextString(text='Mezh Tetravex', font='monospace')
+		self._game_title.text_color = self._text_color
+		self._game_title.presize(pygame.Rect(0, 0, W, H // 2))
+		self._game_title.font_size = 65
+		self._main_menu.add_elem(self._game_title)
+
+		self._play_btn = TextButton(border_radius=5)
+		self._play_btn.presize(pygame.Rect(W // 2 - 60, H // 2, 120, 30))
+		self._play_btn.content.text = 'Play'
+		self._play_btn.callback = self._go_to_game_page
+		self._main_menu.add_elem(self._play_btn)
 		# Game page
 		self._central_text = TextString()
 		self._central_text.text_color = self._text_color
@@ -88,8 +111,7 @@ class App():
 		self._board_pad.callback = self._check_win
 		self._game_page.add_elem(self._board_pad)
 
-		self._restart_text = TextButton()
-		self._restart_text.back_color = self._back_color
+		self._restart_text = TextButton(back=False)
 		self._restart_text.content.font = 'monospace'
 		self._restart_text.content.text = 'Restart'
 		self._restart_text.presize(pygame.Rect(30, 310, 130, 30))
@@ -129,13 +151,11 @@ class App():
 		self._size_dec_btn.callback = self._dec_size
 		self._game_page.add_elem(self._size_dec_btn)
 
-		self.restart()
-
 	def event(self, event: pygame.event.EventType):
 		self._menus.event(event)
 
 	def step(self, delta: float):
-		self._screen.fill(self._back_color)
+		self._screen.blit(self._background, (0, 0))
 		self._menus.render_onto(self._screen)
 
 	def quit(self):
@@ -146,7 +166,10 @@ class App():
 		self._timer.start()
 		self._board.resize(self.size, self.size)
 		self._board.restart()
-		self._game_page.show(self._board_pad)
+
+	def _go_to_game_page(self, *args):
+		self._menus.switch('game')
+		self.restart()
 
 	def _inc_size(self, *args):
 		new_size = self.size + 1

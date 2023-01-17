@@ -15,11 +15,11 @@ class UIElement():
 	def __init_subclass__(cls, **kwargs):
 		super().__init_subclass__(**kwargs)
 
-	def __init__(self, *args, back_color='Ivory', **kwargs):
+	def __init__(self, *args, back_color='Ivory', back=True, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.__rect: pygame.Rect = None
 		self.__back_color = back_color
-		self.__back = True
+		self.__back = back
 
 	def presize(self, rect: pygame.Rect):
 		self.__rect = rect
@@ -79,6 +79,8 @@ class BorderedContainer(UIElement):
 		self.content.render_onto(surf)
 
 	def _draw_back(self, surf: pygame.Surface):
+		if not self.back:
+			return
 		pygame.draw.rect(
 			surf, self.back_color, self.rect,
 			border_radius=self.border_radius,

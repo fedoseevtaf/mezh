@@ -44,7 +44,8 @@ class App():
 		self._WIN_TEXT = 'WIN!'
 		# UI details
 		self._screen: pygame.Surface = None
-		self._backgraoud: pygame.Surface = None
+		self._backgroud: pygame.Surface = None
+		self._win_sound: pygame.mixer.Sound = None
 
 		self._front_color = 'Ivory'
 		self._text_color = 'Black'
@@ -78,6 +79,7 @@ class App():
 	def init(self):
 		self._screen = pygame.display.get_surface()
 		self._background = pygame.image.load('img/back.png').convert()
+		self._win_sound = pygame.mixer.Sound('sound/win.ogg')
 
 		self._menus = ContextSwitcher()
 		self._game_page = Context()
@@ -216,9 +218,10 @@ class App():
 
 	def _check_win(self, *args):
 		if self._board.win:
+			self._timer.stop()
 			self._central_text.font_size = 80
 			self._central_text.text = self._WIN_TEXT
-			self._timer.stop()
+			self._win_sound.play()
 
 	def _update_size_display(self):
 		self._size_display.content.text = str(self.size)

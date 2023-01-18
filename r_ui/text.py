@@ -4,6 +4,9 @@ from r_ui.base import UIElement
 
 
 class TextString(UIElement):
+	'''\
+	Class for single line of text with no background.
+	'''
 
 	def __init__(self, *args, 
 			text: str = '', font: str = 'monospace',
@@ -11,6 +14,10 @@ class TextString(UIElement):
 		super().__init__(*args, **kwargs)
 		self.__text = text
 		self.__text_color = text_color
+		# You can use pygame.font.Font or pygame.freetype.Font
+		# instead of pygame.font.Sysfont to use custom font
+		# (font type)
+		# And 'path/of.font' as font name
 		self.__font_name = font
 		self.__font_type = pygame.font.SysFont
 		self.__font_size = 0
@@ -20,6 +27,11 @@ class TextString(UIElement):
 		self.__text_rect = None
 
 	def estimate(self):
+		'''\
+		Help you estimate size of text string
+		while you place ui elements.
+		'''
+
 		if self.__font is None:
 			return 0, 0
 		return self.__font.size(self.text)

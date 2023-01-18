@@ -4,10 +4,13 @@ from r_ui.base import UIElement
 
 
 class Shape(UIElement):
+	'''
+	UI element without purpose just with draw method.
+	'''
 
 	def __init__(self, *args, color='Sienna', **kwargs):
 		super().__init__(*args, **kwargs)
-		self.__color = color
+		self.__color = color # Simple property for base color of shape
 
 	@property
 	def color(self):

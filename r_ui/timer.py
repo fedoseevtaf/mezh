@@ -5,7 +5,22 @@ import pygame
 from r_ui.text import TextString
 
 
+def format_ms(delta: float):
+	'''\
+	Format delta in seconds to
+	mm:ss
+	'''
+
+	delta = int(delta)
+	second = delta % 60 // 1
+	minute = delta // 60 % 60
+	return f'{minute:02}:{second:02}'
+
+
 class Timer(TextString):
+	'''\
+	Simple timer element with only minutes ans seconds.
+	'''
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -14,10 +29,7 @@ class Timer(TextString):
 		self.__is_on = False
 
 	def render_onto(self, surf: pygame.Surface):
-		delta = int(self.get())
-		second = delta % 60 // 1
-		minute = delta // 60 % 60
-		self.text = f'{minute:02}:{second:02}'
+		self.text = format_ms(self.get())
 		super().render_onto(surf)
 
 	def start(self):

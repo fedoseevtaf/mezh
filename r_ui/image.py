@@ -4,6 +4,9 @@ from r_ui.base import UIElement
 
 
 class Image(UIElement):
+	'''\
+	UI element that basicly load ad display scaled by the element's size image.
+	'''
 
 	def __init__(self, *args, src: str = None, **kwargs):
 		super().__init__(*args, **kwargs)

@@ -6,6 +6,9 @@ from r_ui.base import UIElement
 
 
 class Context(UIElement):
+	'''\
+	Group of ui elements that can show or hide them.
+	'''
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -43,6 +46,10 @@ class Context(UIElement):
 
 
 class ContextSwitcher(Context):
+	'''\
+	Group of contexts, provide single context displaying and switching
+	of actual context. Use to make menus and pages switching.
+	'''
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)

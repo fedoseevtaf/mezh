@@ -1,7 +1,6 @@
 import pygame
 
 from uiboard import UIBoard
-from r_ui.base import UIElement
 from r_ui.text import TextString
 from r_ui.timer import Timer
 from r_ui.context import Context, ContextSwitcher
@@ -54,7 +53,7 @@ class App():
 		self._game_page: Context = None
 		self._main_menu: Context = None
 		
-		self._to_main_menu_btn: ImageBtn = None
+		self._to_main_menu_btn: ImageButton = None
 		# Main menu
 		self._game_title: TextString = None
 		self._play_btn: TextButton = None

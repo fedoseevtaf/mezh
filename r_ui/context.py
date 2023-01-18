@@ -14,6 +14,7 @@ class Context(UIElement):
 		super().__init__(*args, **kwargs)
 		self.__layers: List[Set[UIElement]] = [set(),]
 		self.__ishidden: Dict[UIElement, bool] = {}
+		self.__ismuted: Dict[UIElemet, bool] = {}
 
 	def render_onto(self, surf: pygame.Surface):
 		for layer in self.__layers:
@@ -25,7 +26,7 @@ class Context(UIElement):
 	def event(self, event: pygame.event.EventType):
 		for layer in reversed(self.__layers):
 			for ui_element in layer:
-				if self.__ishidden[ui_element]:
+				if self.__ismuted[ui_element]:
 					continue
 				ui_element.event(event)
 
@@ -42,6 +43,7 @@ class Context(UIElement):
 			self.__layers.append(set())
 		self.__layers[layer].add(ui_element)
 		self.__ishidden[ui_element] = False
+		self.__ismuted[ui_element] = False
 	
 	def rem_elem(self, ui_element: UIElement):
 		for layer in self.__layers:
@@ -53,6 +55,12 @@ class Context(UIElement):
 
 	def hide(self, ui_element: UIElement):
 		self.__ishidden[ui_element] = True
+
+	def loud(self, ui_element: UIElement):
+		self.__ismuted[ui_element] = False
+
+	def mute(self, ui_element: UIElement):
+		self.__ismuted[ui_element] = True
 
 	def __contain__(self, ui_element: UIElement):
 		return any(ui_element in layer for layer in self.__layers)

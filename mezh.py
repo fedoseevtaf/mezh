@@ -182,9 +182,10 @@ class App():
 
 	def restart(self, *args):
 		self._central_text.text = ''
-		self._timer.start()
 		self._board.resize(self.size, self.size)
 		self._board.restart()
+		self._game_page.loud(self._board_pad)
+		self._timer.start()
 
 	def _go_to_game_page(self, *args):
 		self._menus.switch('game')
@@ -219,6 +220,7 @@ class App():
 	def _check_win(self, *args):
 		if self._board.win:
 			self._timer.stop()
+			self._game_page.mute(self._board_pad)
 			self._central_text.font_size = 80
 			self._central_text.text = self._WIN_TEXT
 			self._win_sound.play()

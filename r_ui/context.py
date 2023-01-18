@@ -1,4 +1,4 @@
-from typing import Set, Dict
+from typing import Set, Dict, List
 
 import pygame
 
@@ -12,27 +12,40 @@ class Context(UIElement):
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.__elements: Set[UIElement] = set()
+		self.__layers: List[Set[UIElement]] = [set(),]
 		self.__ishidden: Dict[UIElement, bool] = {}
 
 	def render_onto(self, surf: pygame.Surface):
-		for ui_element in self.__elements:
-			if self.__ishidden[ui_element]:
-				continue
-			ui_element.render_onto(surf)
+		for layer in self.__layers:
+			for ui_element in layer:
+				if self.__ishidden[ui_element]:
+					continue
+				ui_element.render_onto(surf)
 
 	def event(self, event: pygame.event.EventType):
-		for ui_element in self.__elements:
-			if self.__ishidden[ui_element]:
-				continue
-			ui_element.event(event)
+		for layer in reversed(self.__layers):
+			for ui_element in layer:
+				if self.__ishidden[ui_element]:
+					continue
+				ui_element.event(event)
 
-	def add_elem(self, ui_element: UIElement):
-		self.__elements.add(ui_element)
+	def add_elem(self, ui_element: UIElement, *args, layer=0):
+		'''\
+		I advise you this syntax to make layers easy if you add first new layer:
+											v
+		my_context.add_elem(top_elem, layer=+1)
+		'''
+
+		if  not (0 <= layer <= len(self.__layers)):
+			return
+		if layer == len(self.__layers):
+			self.__layers.append(set())
+		self.__layers[layer].add(ui_element)
 		self.__ishidden[ui_element] = False
 	
 	def rem_elem(self, ui_element: UIElement):
-		self.__elements.discard(ui_element)
+		for layer in self.__layers:
+			layer.discard(ui_element)
 		self.__ishidden.pop(ui_element)
 	
 	def show(self, ui_element: UIElement):
@@ -42,7 +55,7 @@ class Context(UIElement):
 		self.__ishidden[ui_element] = True
 
 	def __contain__(self, ui_element: UIElement):
-		return ui_element is self.__elements
+		return any(ui_element in layer for layer in self.__layers)
 
 
 class ContextSwitcher(Context):

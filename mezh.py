@@ -52,11 +52,13 @@ class App():
 		self._menus: ContextSwitcher = None
 		self._game_page: Context = None
 		self._main_menu: Context = None
+		self._records_page: Context = None
 		
 		self._to_main_menu_btn: ImageButton = None
 		# Main menu
 		self._game_title: TextString = None
 		self._play_btn: TextButton = None
+		self._records_btn: TextButton = None
 		# Game page
 		self._central_text: TextString = None
 
@@ -82,6 +84,8 @@ class App():
 		self._menus.set_context('game', self._game_page)
 		self._main_menu = Context()
 		self._menus.set_context('menu', self._main_menu)
+		self._records_page = Context()
+		self._menus.set_context('records', self._records_page)
 		self._menus.switch('menu')
 
 		self._to_main_menu_btn = ImageButton(border_radius=5)
@@ -89,6 +93,7 @@ class App():
 		self._to_main_menu_btn.presize(pygame.Rect(30, 2, 26, 26))
 		self._to_main_menu_btn.callback = self._go_to_main_menu
 		self._game_page.add_elem(self._to_main_menu_btn)
+		self._records_page.add_elem(self._to_main_menu_btn)
 		# Main menu
 		self._game_title = TextString(text='Mezh Tetravex', font='monospace')
 		self._game_title.text_color = self._text_color
@@ -101,11 +106,18 @@ class App():
 		self._play_btn.content.text = 'Play'
 		self._play_btn.callback = self._go_to_game_page
 		self._main_menu.add_elem(self._play_btn)
+
+		self._records_btn = TextButton(border_radius=5)
+		# 5 pixels down the play button
+		self._records_btn.presize(pygame.Rect(W // 2 - 60, H // 2 + 35, 120, 30))
+		self._records_btn.content.text = 'Records'
+		self._records_btn.callback = self._go_to_records_page
+		self._main_menu.add_elem(self._records_btn)
 		# Game page
 		self._central_text = TextString()
 		self._central_text.text_color = self._text_color
 		self._central_text.presize(pygame.Rect((0, 0), RESOLUTION))
-		self._game_page.add_elem(self._central_text)
+		self._game_page.add_elem(self._central_text, layer=+1)
 
 		self._board_pad = ContainerButton(border_radius=10)
 		self._board_pad.back_color = self._front_color
@@ -175,9 +187,17 @@ class App():
 	def _go_to_game_page(self, *args):
 		self._menus.switch('game')
 		self.restart()
-		
+
 	def _go_to_main_menu(self, *args):
 		self._menus.switch('menu')
+		self._finish_pages_progress()
+
+	def _go_to_records_page(self, *args):
+		self._menus.switch('records')
+		self._update_records()
+
+	def _finish_pages_progress(self):
+		self._timer.stop()
 
 	def _inc_size(self, *args):
 		new_size = self.size + 1
@@ -190,6 +210,9 @@ class App():
 		if new_size in self._size_range:
 			self.size = new_size
 		self._update_size_display()
+
+	def _update_records(self):
+		pass
 
 	def _check_win(self, *args):
 		if self._board.win:

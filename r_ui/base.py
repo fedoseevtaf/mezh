@@ -11,23 +11,40 @@ import pygame
 
 
 class UIElement():
+	'''\
+	Base class for all ui stuff.
+	'''
 
 	def __init_subclass__(cls, **kwargs):
 		super().__init_subclass__(**kwargs)
 
 	def __init__(self, *args, back_color='Ivory', back=True, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.__rect: pygame.Rect = None
+		self.__rect: pygame.Rect = None # Place of the ui element
 		self.__back_color = back_color
-		self.__back = back
+		self.__back = back # Draw background or not
 
 	def presize(self, rect: pygame.Rect):
+		'''\
+		To draw ui element you need to set it's place.
+		'''
+
 		self.__rect = rect
 
 	def event(self, event: pygame.event.EventType):
+		'''\
+		ALL events should be send to that method
+		to make ui element 'alive'.
+		'''
+
 		pass
 
 	def render_onto(self, surf: pygame.Surface):
+		'''\
+		Draw the ui element to the surface. Surface is independent
+		by the ui element.
+		'''
+
 		if self.rect is None:
 			return
 		self._draw_back(surf)
@@ -39,6 +56,10 @@ class UIElement():
 
 	@property
 	def rect(self):
+		'''\
+		You can't set it: use 'presize' method.
+		'''
+
 		return self.__rect
 
 	@property
@@ -49,13 +70,22 @@ class UIElement():
 	def back_color(self, color):
 		self.__back_color = color
 		return self.back_color
-		
+
 	@property
 	def back(self) -> bool:
 		return self.__back
 
+	@back.setter
+	def back(self, back: bool):
+		self.__back = back
+		return self.back
+
 
 class BorderedContainer(UIElement):
+	'''\
+	Provide shell for the 'content' ui element
+	and make back with border radius.
+	'''
 
 	def __init__(self, *args, border_radius: int = 0, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -63,16 +93,28 @@ class BorderedContainer(UIElement):
 		self.__border_radius = border_radius
 
 	def presize(self, rect: pygame.Rect):
+		'''\
+		Presize content ui element considering the border radius.
+		'''
+
 		super().presize(rect)
 		self._presize_content()
 		
 	def event(self, event: pygame.event.EventType):
+		'''\
+		Throw events to the content.
+		'''
+
 		super().event(event)
 		if self.content is None:
 			return
 		self.content.event(event)
 
 	def render_onto(self, surf: pygame.Surface):
+		'''\
+		Draw back with border radius and content over it.
+		'''
+
 		self._draw_back(surf)
 		if self.content is None:
 			return
@@ -116,6 +158,11 @@ class BorderedContainer(UIElement):
 
 
 class Button(UIElement):
+	'''\
+	Simple class to make interactive ui elements
+	for mouse actions.
+	'''
+
 	ON_PRESS = 1
 	ON_RELEASE = 2
 
@@ -125,6 +172,10 @@ class Button(UIElement):
 		self.__mode = self.ON_PRESS
 
 	def event(self, event: pygame.event.EventType):
+		'''\
+		Event handling and defining mode of action.
+		'''
+
 		super().event(event)
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			self.mouse_act(event.pos, self.ON_PRESS)
@@ -132,10 +183,18 @@ class Button(UIElement):
 			self.mouse_act(event.pos, self.ON_RELEASE)
 
 	def mouse_act(self, pos, action):
+		'''\
+		Handling mode of action.
+		'''
+
 		if self.mode & action:
 			self.click_at(pos)
 
 	def click_at(self, pos):
+		'''\
+		Check that mouse action is on the button.
+		'''
+
 		if self.rect is None:
 			return
 		if self.rect.collidepoint(pos):

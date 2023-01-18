@@ -84,6 +84,12 @@ class App():
 		self._main_menu = Context()
 		self._menus.set_context('menu', self._main_menu)
 		self._menus.switch('menu')
+
+		self._to_main_menu_btn = ImageButton(border_radius=5)
+		self._to_main_menu_btn.content.src = 'img/back_arrow.png'
+		self._to_main_menu_btn.presize(pygame.Rect(30, 2, 26, 26))
+		self._to_main_menu_btn.callback = self._go_to_main_menu
+		self._game_page.add_elem(self._to_main_menu_btn)
 		# Main menu
 		self._game_title = TextString(text='Mezh Tetravex', font='monospace')
 		self._game_title.text_color = self._text_color
@@ -170,6 +176,9 @@ class App():
 	def _go_to_game_page(self, *args):
 		self._menus.switch('game')
 		self.restart()
+		
+	def _go_to_main_menu(self, *args):
+		self._menus.switch('menu')
 
 	def _inc_size(self, *args):
 		new_size = self.size + 1

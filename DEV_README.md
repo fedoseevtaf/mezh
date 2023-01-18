@@ -2,6 +2,7 @@
 
 - Only tabs
 - No .gitignore in repo
+- Tiny __init__
 - Tests segregation
 
 ## Indentation policy
@@ -14,6 +15,10 @@ because tabs can be rescaled and customised easily.
 You SHALL NOT push or even commit .gitignore, 
 but you SHALL use it to protect repo of unexpected 
 info about your work process.
+
+## Constructor policy
+
+You SHALL make tiny minimal __init__.
 
 ## Tests policy
 

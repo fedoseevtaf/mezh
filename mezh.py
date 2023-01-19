@@ -1,15 +1,25 @@
+from random import randrange
+
 import pygame
 
 from uiboard import UIBoard
 from r_ui.text import TextString
-from r_ui.timer import Timer
+from r_ui.timer import Timer, format_ms
+from r_ui.list import VList
 from r_ui.context import Context, ContextSwitcher
-from r_ui.input import KeyInput
 from r_ui.advanced import (
 	TextField, TextButton,
 	UpArrowButton, DownArrowButton,
 	ImageButton, ContainerButton,
 )
+
+
+def read_data():
+	return ((randrange(100), 'rfyhu') for _ in range(15))
+
+
+def write_data(data):
+	print(data)
 
 
 FPS = 60
@@ -61,6 +71,9 @@ class App():
 		self._game_title: TextString = None
 		self._play_btn: TextButton = None
 		self._records_btn: TextButton = None
+		# Records page
+		self._records_header: TextString = None
+		self._records_list: VList = None
 		# Game page
 		self._central_text: TextString = None
 
@@ -117,9 +130,18 @@ class App():
 		self._records_btn.callback = self._go_to_records_page
 		self._main_menu.add_elem(self._records_btn)
 		# Records page
-		self._nickname_input = KeyInput()
-		self._nickname_input.is_active = True
-		self._records_page.add_elem(self._nickname_input)
+		self._records_header = TextString(text='Records', font='monospace')
+		self._records_header.text_color = self._text_color
+		self._records_header.presize(pygame.Rect(W // 2 - 100, 20, 200, 40))
+		self._records_page.add_elem(self._records_header)
+
+		self._records_list = VList(back=False, spacing=4)
+		self._records_list.presize(pygame.Rect(W // 2 - 100, 80, 200, H - 120))
+		for _ in range(10):
+			self._records_list.append(TextString(
+				font='monospace', text_color=self._text_color,
+			))
+		self._records_page.add_elem(self._records_list)
 		# Game page
 		self._central_text = TextString()
 		self._central_text.text_color = self._text_color
@@ -220,7 +242,11 @@ class App():
 		self._update_size_display()
 
 	def _update_records(self):
-		pass
+		for text_string in self._records_list:
+			text_string.text = ''
+		for text_string, data in zip(self._records_list, read_data()):
+			time, nickname = data
+			text_string.text = f'{nickname: <20} {format_ms(time)}'
 
 	def _check_win(self, *args):
 		if self._board.win:

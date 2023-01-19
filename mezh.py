@@ -57,6 +57,7 @@ class App():
 		self._screen: pygame.Surface = None
 		self._backgroud: pygame.Surface = None
 		self._win_sound: pygame.mixer.Sound = None
+		self._clcik_sound: pygame.mixer.Sound = None
 
 		self._front_color = 'Ivory'
 		self._text_color = 'Black'
@@ -94,6 +95,7 @@ class App():
 		self._screen = pygame.display.get_surface()
 		self._background = pygame.image.load('img/back.png').convert()
 		self._win_sound = pygame.mixer.Sound('sound/win.ogg')
+		self._click_sound = pygame.mixer.Sound('sound/click_tick.ogg')
 
 		self._menus = ContextSwitcher()
 		self._game_page = Context()
@@ -198,6 +200,8 @@ class App():
 		self._game_page.add_elem(self._size_dec_btn)
 
 	def event(self, event: pygame.event.EventType):
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			self._click_sound.play()
 		self._menus.event(event)
 
 	def step(self, delta: float):

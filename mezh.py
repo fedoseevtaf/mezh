@@ -4,6 +4,7 @@ from uiboard import UIBoard
 from r_ui.text import TextString
 from r_ui.timer import Timer
 from r_ui.context import Context, ContextSwitcher
+from r_ui.input import KeyInput
 from r_ui.advanced import (
 	TextField, TextButton,
 	UpArrowButton, DownArrowButton,
@@ -115,6 +116,10 @@ class App():
 		self._records_btn.content.text = 'Records'
 		self._records_btn.callback = self._go_to_records_page
 		self._main_menu.add_elem(self._records_btn)
+		# Records page
+		self._nickname_input = KeyInput()
+		self._nickname_input.is_active = True
+		self._records_page.add_elem(self._nickname_input)
 		# Game page
 		self._central_text = TextString()
 		self._central_text.text_color = self._text_color

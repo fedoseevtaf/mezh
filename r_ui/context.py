@@ -14,7 +14,7 @@ class Context(UIElement):
 		super().__init__(*args, **kwargs)
 		self.__layers: List[Set[UIElement]] = [set(),]
 		self.__ishidden: Dict[UIElement, bool] = {}
-		self.__ismuted: Dict[UIElemet, bool] = {}
+		self.__ismuted: Dict[UIElement, bool] = {}
 
 	def render_onto(self, surf: pygame.Surface):
 		for layer in self.__layers:
@@ -37,7 +37,7 @@ class Context(UIElement):
 		my_context.add_elem(top_elem, layer=+1)
 		'''
 
-		if  not (0 <= layer <= len(self.__layers)):
+		if not (0 <= layer <= len(self.__layers)):
 			return
 		if layer == len(self.__layers):
 			self.__layers.append(set())

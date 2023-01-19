@@ -1,6 +1,7 @@
 from r_ui.base import BorderedContainer, Button
 from r_ui.text import TextString
 from r_ui.image import Image
+from r_ui.input import KeyInput
 from r_ui.shapes import UpTriangle, DownTriangle
 
 
@@ -80,4 +81,35 @@ class ImageButton(Button, BorderedContent, content_type=Image):
 	'''
 
 	pass
+
+
+class LineInput(KeyInput, BorderedContent, content_type=TextString):
+
+	def __init__(self, *args, line_len=10, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.__line_len = line_len
+
+	def callback(self, pos):
+		self.is_active = True
+
+	def new_char(self, char: str):
+		new_line = self.content.text + char
+		if len(new_line) > self.line_len:
+			return
+		self.content.text = new_line
+
+	def del_char(self):
+		self.content.text = self.content.text[:-1]
+
+	def get_line(self) -> str:
+		return self.content.text
+
+	@property
+	def line_len(self) -> int:
+		return self.__line_len
+
+	@line_len.setter
+	def line_len(self, line_len: int):
+		self.__line_len = line_len
+		return self.lien_len
 

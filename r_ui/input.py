@@ -17,6 +17,8 @@ class KeyInput(UIElement):
 			# K_RETURN is Enter
 			if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE:
 				self.is_active = False
+			elif event.key == pygame.BACKSPACE:
+				self.del_char()
 			else:
 				self.new_char(event.unicode)
 

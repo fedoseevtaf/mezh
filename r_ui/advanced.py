@@ -83,7 +83,7 @@ class ImageButton(Button, BorderedContent, content_type=Image):
 	pass
 
 
-class LineInput(KeyInput, BorderedContent, content_type=TextString):
+class LineInput(KeyInput, Button, BorderedContent, content_type=TextString):
 
 	def __init__(self, *args, line_len=10, **kwargs):
 		super().__init__(*args, **kwargs)

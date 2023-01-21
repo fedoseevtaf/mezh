@@ -26,7 +26,7 @@ class Context(UIElement):
 	def event(self, event: pygame.event.EventType):
 		for layer in reversed(self.__layers):
 			for ui_element in layer:
-				if self.__ismuted[ui_element]:
+				if self.__ismuted[ui_element] or self.__ishidden[ui_element]:
 					continue
 				ui_element.event(event)
 

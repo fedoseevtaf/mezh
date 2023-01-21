@@ -6,11 +6,13 @@ from uiboard import UIBoard
 from r_ui.text import TextString
 from r_ui.timer import Timer, format_ms
 from r_ui.list import VList
+from r_ui.particles import ParticlesAnimation
 from r_ui.context import Context, ContextSwitcher
 from r_ui.advanced import (
 	TextField, TextButton,
 	UpArrowButton, DownArrowButton,
 	ImageButton, ContainerButton,
+	LineInput,
 )
 
 
@@ -53,11 +55,13 @@ class App():
 		self.size = 3
 		self._size_range = range(2, 8)
 		self._WIN_TEXT = 'WIN!'
+		self._records = []
 		# UI details
 		self._screen: pygame.Surface = None
 		self._backgroud: pygame.Surface = None
 		self._win_sound: pygame.mixer.Sound = None
 		self._clcik_sound: pygame.mixer.Sound = None
+		self._particle_icon: pygame.Surface = None
 
 		self._front_color = 'Ivory'
 		self._text_color = 'Black'
@@ -66,6 +70,7 @@ class App():
 		self._game_page: Context = None
 		self._main_menu: Context = None
 		self._records_page: Context = None
+		self._save_record_page: Context = None
 		
 		self._to_main_menu_btn: ImageButton = None
 		# Main menu
@@ -75,8 +80,13 @@ class App():
 		# Records page
 		self._records_header: TextString = None
 		self._records_list: VList = None
+		# Save record page
+		self._actual_record_view: TextString = None
+		self._nickname_input: LineInput = None
+		self._save_record_btn: TextButton = None
 		# Game page
 		self._central_text: TextString = None
+		self._win_particles: ParticlesAnimation = None
 
 		self._board: UIBoard = None
 		self._board_pad: ContainerButton = None
@@ -91,11 +101,15 @@ class App():
 		self._size_inc_btn: UpArrowButton = None
 		self._size_dec_btn: DownArrowButton = None
 
+		self._save_record_after_win_btn: TextButton = None
+
 	def init(self):
+		self._download_records()
 		self._screen = pygame.display.get_surface()
 		self._background = pygame.image.load('img/back.png').convert()
 		self._win_sound = pygame.mixer.Sound('sound/win.ogg')
 		self._click_sound = pygame.mixer.Sound('sound/click_tick.ogg')
+		self._particle_icon = pygame.image.load('img/particle.png').convert_alpha()
 
 		self._menus = ContextSwitcher()
 		self._game_page = Context()
@@ -104,6 +118,8 @@ class App():
 		self._menus.set_context('menu', self._main_menu)
 		self._records_page = Context()
 		self._menus.set_context('records', self._records_page)
+		self._save_record_page = Context()
+		self._menus.set_context('new_record', self._save_record_page)
 		self._menus.switch('menu')
 
 		self._to_main_menu_btn = ImageButton(border_radius=5)
@@ -112,6 +128,7 @@ class App():
 		self._to_main_menu_btn.callback = self._go_to_main_menu
 		self._game_page.add_elem(self._to_main_menu_btn)
 		self._records_page.add_elem(self._to_main_menu_btn)
+		self._save_record_page.add_elem(self._to_main_menu_btn)
 		# Main menu
 		self._game_title = TextString(text='Mezh Tetravex', font='monospace')
 		self._game_title.text_color = self._text_color
@@ -144,11 +161,36 @@ class App():
 				font='monospace', text_color=self._text_color,
 			))
 		self._records_page.add_elem(self._records_list)
+		# Save record page
+		self._nickname_input = LineInput(border_radius=5, line_len=16)
+		self._nickname_input.back_color = self._front_color
+		self._nickname_input.content.text_color = self._text_color
+		self._nickname_input.content.font = 'monospace'
+		self._nickname_input.presize(pygame.Rect(W // 2 - 105, 50, 210, 30))
+		self._save_record_page.add_elem(self._nickname_input)
+
+		self._actual_record_view = TextString(font='monospace')
+		self._actual_record_view.text_color = self._text_color
+		self._actual_record_view.presize(pygame.Rect(W // 2, 110, 0, 50))
+		self._save_record_page.add_elem(self._actual_record_view)
+
+		self._save_record_btn = TextButton(border_radius=5)
+		self._save_record_btn.color = self._front_color
+		self._save_record_btn.content.text = 'Save'
+		self._save_record_btn.content.font = 'monospace'
+		self._save_record_btn.content.text_color = self._text_color
+		self._save_record_btn.presize(pygame.Rect(W // 2 - 50, H - 60, 100, 30))
+		self._save_record_btn.callback = self._save_new_record
+		self._save_record_page.add_elem(self._save_record_btn)
 		# Game page
 		self._central_text = TextString()
 		self._central_text.text_color = self._text_color
 		self._central_text.presize(pygame.Rect((0, 0), RESOLUTION))
 		self._game_page.add_elem(self._central_text, layer=+1)
+
+		self._win_particles = ParticlesAnimation(image=self._particle_icon)
+		self._win_particles.timeout = 10
+		self._game_page.add_elem(self._win_particles, layer=2)
 
 		self._board_pad = ContainerButton(border_radius=10)
 		self._board_pad.back_color = self._front_color
@@ -160,6 +202,7 @@ class App():
 		self._game_page.add_elem(self._board_pad)
 
 		self._restart_text = TextButton(back=False)
+		self._restart_text.content.text_color = self._text_color
 		self._restart_text.content.font = 'monospace'
 		self._restart_text.content.text = 'Restart'
 		self._restart_text.presize(pygame.Rect(30, 310, 130, 30))
@@ -199,7 +242,16 @@ class App():
 		self._size_dec_btn.callback = self._dec_size
 		self._game_page.add_elem(self._size_dec_btn)
 
-	def event(self, event: pygame.event.EventType):
+		self._save_record_after_win_btn = TextButton(border_radius=5)
+		self._save_record_after_win_btn.content.text_color = self._text_color
+		self._save_record_after_win_btn.content.font = 'monospace'
+		self._save_record_after_win_btn.content.text = 'Save record'
+		self._save_record_after_win_btn.presize(pygame.Rect(410, 310, 200, 30))
+		self._save_record_after_win_btn.callback = self._go_to_save_record_page
+		self._game_page.add_elem(self._save_record_after_win_btn)
+		self._game_page.hide(self._save_record_after_win_btn)
+
+	def event(self, event: pygame.event.EventType):	
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			self._click_sound.play()
 		self._menus.event(event)
@@ -209,10 +261,17 @@ class App():
 		self._menus.render_onto(self._screen)
 
 	def quit(self):
+		self._upload_records()
+
+	def _download_records(self):
+		pass
+
+	def _upload_records(self):
 		pass
 
 	def restart(self, *args):
 		self._central_text.text = ''
+		self._game_page.hide(self._save_record_after_win_btn)
 		self._board.resize(self.size, self.size)
 		self._board.restart()
 		self._game_page.loud(self._board_pad)
@@ -230,8 +289,23 @@ class App():
 		self._menus.switch('records')
 		self._update_records()
 
+	def _go_to_save_record_page(self, *args):
+		self._menus.switch('new_record')
+		self._nickname_input.content.text = 'myrecord'
+		self._nickname_input.is_active = True
+		self._actual_record_view.text = format_ms(self._timer.get())
+
 	def _finish_pages_progress(self):
 		self._timer.stop()
+
+	def _save_new_record(self, *args):
+		self._records.append((
+			self._timer.get(),
+			self._nickname_input.get_line(),
+			self.size,
+		))
+		self._records.sort()
+		self._go_to_main_menu()
 
 	def _inc_size(self, *args):
 		new_size = self.size + 1
@@ -248,14 +322,16 @@ class App():
 	def _update_records(self):
 		for text_string in self._records_list:
 			text_string.text = ''
-		for text_string, data in zip(self._records_list, read_data()):
-			time, nickname = data
-			text_string.text = f'{nickname: <20} {format_ms(time)}'
+		for text_string, record in zip(self._records_list, self._records):
+			time, nickname, size = record
+			text_string.text = f'{nickname: <20}{size: <3}{format_ms(time)}'
 
 	def _check_win(self, *args):
 		if self._board.win:
 			self._timer.stop()
 			self._game_page.mute(self._board_pad)
+			self._game_page.show(self._save_record_after_win_btn)
+			self._win_particles.restart((W // 2, H // 2))
 			self._central_text.font_size = 80
 			self._central_text.text = self._WIN_TEXT
 			self._win_sound.play()

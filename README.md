@@ -12,6 +12,12 @@ Read about [tetravex on wikipedia](https://en.wikipedia.org/wiki/Edge-matching_p
 
 ![Preview of the game](misc/preview.png)
 
+## Features
+
+- Resizable window
+- Menu
+- Records list
+
 ## Development
 
 ### Framework

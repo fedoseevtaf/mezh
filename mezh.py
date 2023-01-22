@@ -4,7 +4,7 @@ import pygame
 
 from uiboard import UIBoard
 from r_ui.text import TextString
-from r_ui.timer import Timer, format_ms
+from r_ui.timer import Timer, format_ms # fomat minutes seconds
 from r_ui.list import VList
 from r_ui.particles import ParticlesAnimation
 from r_ui.context import Context, ContextSwitcher
@@ -29,7 +29,7 @@ def main(app):
 	pygame.display.set_icon(icon)
 	pygame.display.set_caption(CAPTION)
 	clock = pygame.time.Clock()
-	
+
 	app.init()
 	while True:
 		for event in pygame.event.get():
@@ -38,8 +38,8 @@ def main(app):
 			app.event(event)
 		pygame.display.flip()
 		app.step(clock.tick(FPS))
-		
-		
+
+
 class RecordsList():
 
 	def __init__(self, size=10):
@@ -111,27 +111,27 @@ class App():
 	def __init__(self):
 		# Behavior
 		self.size = 3
-		self._record_size = self.size
-		self._size_range = range(2, 8)
+		self._record_size = self.size # Size of field of the last win
+		self._size_range = range(2, 8) # Valid size values
 		self._WIN_TEXT = 'WIN!'
 		self._records = RecordsList()
 		self._records_dump_path = 'records.json'
 		# UI details
-		self._screen: pygame.Surface = None
-		self._backgroud: pygame.Surface = None
-		self._win_sound: pygame.mixer.Sound = None
-		self._clcik_sound: pygame.mixer.Sound = None
-		self._particle_icon: pygame.Surface = None
-
 		self._front_color = 'Ivory'
 		self._text_color = 'Black'
+
+		self._screen: pygame.Surface = None
+		self._backgroud: pygame.Surface = None
+		self._particle_icon: pygame.Surface = None
+		self._win_sound: pygame.mixer.Sound = None
+		self._click_sound: pygame.mixer.Sound = None
 
 		self._menus: ContextSwitcher = None
 		self._game_page: Context = None
 		self._main_menu: Context = None
 		self._records_page: Context = None
 		self._save_record_page: Context = None
-		
+
 		self._to_main_menu_btn: ImageButton = None
 		# Main menu
 		self._game_title: TextString = None
@@ -147,9 +147,11 @@ class App():
 		# Game page
 		self._central_text: TextString = None
 		self._win_particles: ParticlesAnimation = None
+		# Central text and particles are decorations for win
+		self._save_record_after_win_btn: TextButton = None
 
 		self._board: UIBoard = None
-		self._board_pad: ContainerButton = None
+		self._board_pad: ContainerButton = None # Make border around board
 
 		self._restart_text: TextButton = None
 		self._restart_btn: ImageButton = None
@@ -161,15 +163,13 @@ class App():
 		self._size_inc_btn: UpArrowButton = None
 		self._size_dec_btn: DownArrowButton = None
 
-		self._save_record_after_win_btn: TextButton = None
-
 	def init(self):
 		self._download_records()
 		self._screen = pygame.display.get_surface()
 		self._background = pygame.image.load('img/back.png').convert()
+		self._particle_icon = pygame.image.load('img/particle.png').convert_alpha()
 		self._win_sound = pygame.mixer.Sound('sound/win.ogg')
 		self._click_sound = pygame.mixer.Sound('sound/click_tick.ogg')
-		self._particle_icon = pygame.image.load('img/particle.png').convert_alpha()
 
 		self._menus = ContextSwitcher()
 		self._game_page = Context()
@@ -203,8 +203,8 @@ class App():
 		self._main_menu.add_elem(self._play_btn)
 
 		self._records_btn = TextButton(border_radius=5)
-		# 5 pixels down the play button
 		self._records_btn.presize(pygame.Rect(W // 2 - 60, H // 2 + 35, 120, 30))
+		# 5 pixels down the play button
 		self._records_btn.content.text = 'Records'
 		self._records_btn.callback = self._go_to_records_page
 		self._main_menu.add_elem(self._records_btn)
@@ -246,7 +246,10 @@ class App():
 		self._central_text = TextString()
 		self._central_text.text_color = self._text_color
 		self._central_text.presize(pygame.Rect((0, 0), RESOLUTION))
+		self._central_text.font_size = 80
+		self._central_text.text = self._WIN_TEXT
 		self._game_page.add_elem(self._central_text, layer=+1)
+		self._game_page.hide(self._central_text)
 
 		self._win_particles = ParticlesAnimation(image=self._particle_icon)
 		self._win_particles.timeout = 10
@@ -330,7 +333,7 @@ class App():
 		self._records.upload(self._records_dump_path)
 
 	def restart(self, *args):
-		self._central_text.text = ''
+		self._game_page.hide(self._central_text)
 		self._game_page.hide(self._save_record_after_win_btn)
 		self._board.resize(self.size, self.size)
 		self._board.restart()
@@ -392,9 +395,8 @@ class App():
 			self._record_size = self.size
 			self._game_page.mute(self._board_pad)
 			self._game_page.show(self._save_record_after_win_btn)
+			self._game_page.show(self._central_text)
 			self._win_particles.restart((W // 2, H // 2))
-			self._central_text.font_size = 80
-			self._central_text.text = self._WIN_TEXT
 			self._win_sound.play()
 
 	def _update_size_display(self):

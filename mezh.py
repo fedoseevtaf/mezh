@@ -1,5 +1,4 @@
 import json
-from random import randrange
 
 import pygame
 
@@ -94,7 +93,7 @@ class RecordsList():
 			return False
 		for item in data:
 			if len(item) > 3:
-				return false
+				return False
 			if not isinstance(item[0], str):
 				return False
 			if not isinstance(item[1], int):

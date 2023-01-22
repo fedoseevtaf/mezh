@@ -1,3 +1,4 @@
+import json
 from random import randrange
 
 import pygame
@@ -14,14 +15,6 @@ from r_ui.advanced import (
 	ImageButton, ContainerButton,
 	LineInput,
 )
-
-
-def read_data():
-	return ((randrange(100), 'rfyhu') for _ in range(15))
-
-
-def write_data(data):
-	print(data)
 
 
 FPS = 60
@@ -48,14 +41,82 @@ def main(app):
 		app.step(clock.tick(FPS))
 		
 		
+class RecordsList():
+
+	def __init__(self, size=10):
+		self.size = 10
+		self.list = []
+
+	def add(self, title: str, size: int, delta: float):
+		self.list.append((title, size, delta))
+		self.sort()
+		self.format()
+
+	def sort(self):
+		self.list.sort(key=lambda record: (-record[1], record[2]))
+
+	def format(self):
+		if len(self.list) <= self.size:
+			return
+		last = None
+		cnt = 0
+		for i, e in enumerate(self):
+			if e[1] != last:
+				cnt = 0
+			cnt += 1
+			last = e[1]
+			if cnt > 3:
+				break
+		self.pop(i)
+
+	def download(self, path: str):
+		try:
+			with open(path) as file:
+				new_list = json.load(file)
+				if self._is_valid(new_list):
+					self.list = new_list
+					self.sort()
+					self.format()
+		except OSError:
+			pass # File not found etc.
+
+	def upload(self, path: str):
+		try:
+			with open(path, 'w') as file:
+				json.dump(self.list, file)
+		except OSError:
+			pass
+
+	def _is_valid(self, data):
+		if len(data) / self.size > 2:
+			return False
+		if not isinstance(data, list):
+			return False
+		for item in data:
+			if len(item) > 3:
+				return false
+			if not isinstance(item[0], str):
+				return False
+			if not isinstance(item[1], int):
+				return False
+			if not isinstance(item[2], float):
+				return False
+		return True
+
+	def __iter__(self):
+		return iter(self.list)
+
+
 class App():
 
 	def __init__(self):
 		# Behavior
 		self.size = 3
+		self._record_size = self.size
 		self._size_range = range(2, 8)
 		self._WIN_TEXT = 'WIN!'
-		self._records = []
+		self._records = RecordsList()
+		self._records_dump_path = 'records.json'
 		# UI details
 		self._screen: pygame.Surface = None
 		self._backgroud: pygame.Surface = None
@@ -264,10 +325,10 @@ class App():
 		self._upload_records()
 
 	def _download_records(self):
-		pass
+		self._records.download(self._records_dump_path)
 
 	def _upload_records(self):
-		pass
+		self._records.upload(self._records_dump_path)
 
 	def restart(self, *args):
 		self._central_text.text = ''
@@ -299,11 +360,11 @@ class App():
 		self._timer.stop()
 
 	def _save_new_record(self, *args):
-		self._records.append((
-			self._timer.get(),
+		self._records.add(
 			self._nickname_input.get_line(),
-			self.size,
-		))
+			self._record_size,
+			self._timer.get(),
+		)
 		self._records.sort()
 		self._go_to_main_menu()
 
@@ -323,12 +384,13 @@ class App():
 		for text_string in self._records_list:
 			text_string.text = ''
 		for text_string, record in zip(self._records_list, self._records):
-			time, nickname, size = record
+			nickname, size, time = record
 			text_string.text = f'{nickname: <20}{size: <3}{format_ms(time)}'
 
 	def _check_win(self, *args):
 		if self._board.win:
 			self._timer.stop()
+			self._record_size = self.size
 			self._game_page.mute(self._board_pad)
 			self._game_page.show(self._save_record_after_win_btn)
 			self._win_particles.restart((W // 2, H // 2))
